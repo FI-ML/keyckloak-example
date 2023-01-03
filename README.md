@@ -8,3 +8,5 @@
 * Keycloak 20.0.1
 * H2 DB
 * Docker
+
+- [Tutorial](https://developers.redhat.com/articles/2022/12/07/how-implement-single-sign-out-keycloak-spring-boot#application_configuration)
