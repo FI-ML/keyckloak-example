@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+  keycloak_example:
+    container_name: keycloak_example
+    image: quay.io/keycloak/keycloak:20.0.1
+    environment:
+      - DB_VENDOR=postgres
+      - DB_ADDR=keycloak_dev_db
+      - DB_DATABASE=keycloak
+      - DB_SCHEMA=public
+      - DB_USER=keycloak
+      - DB_PASSWORD=changeMe
+      - KC_HOSTNAME=localhost
+      - ROOT_LOGLEVEL=DEBUG
+      - REDIRECT_SOCKET=proxy-https
+      - KC_LOGLEVEL=DEBUG
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=Pa55w0rd
+    command:
+      - start-dev
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    networks:
+      - keycloak-example-network
+    depends_on:
+      - keycloak_example_db
+
+  keycloak_example_db:
+    image: postgres:15-alpine
+    container_name: keycloak_example_db
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: changeMe
+    networks:
+      - keycloak-example-network
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U keycloak -d keycloak' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+networks:
+  keycloak-example-network:
+    driver: bridge
+  backend:
+    driver: bridge
+
+volumes:
+  keycloak-db-data:
+    driver: local
