@@ -21,6 +21,8 @@ services:
     ports:
       - "8080:8080"
       - "8443:8443"
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
     networks:
       - keycloak-example-network
     depends_on:
